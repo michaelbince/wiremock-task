@@ -15,13 +15,13 @@ public class WireMockTestDataProvider {
     private static final String GET_ITEM = "getItemData";
     private static final String UPDATE_ITEM = "updateItemData";
     private static final String DELETE_ITEM = "deleteItemData";
+    private static final int FIRST_ITEM = 0;
 
     @DataProvider(name = "createItemTestData")
     public static Object[][] provideCreateItemTestData() {
-        // Assuming createItemData is a list of maps
         ArrayList<Map<String, Object>> createItemData = (ArrayList<Map<String, Object>>) testData.get(CREATE_ITEM);
 
-        Map<String, Object> item = createItemData.get(0); // Get the first map in the list
+        Map<String, Object> item = createItemData.get(FIRST_ITEM);
 
         CreateItemRequest requestBody = new CreateItemRequest();
         requestBody.setName(item.get("requestBodyName").toString());
@@ -37,10 +37,9 @@ public class WireMockTestDataProvider {
 
     @DataProvider(name = "getItemTestData")
     public static Object[][] provideGetItemTestData() {
-        // Assuming getItemData is a list of maps
         ArrayList<Map<String, Object>> getItemData = (ArrayList<Map<String, Object>>) testData.get(GET_ITEM);
 
-        Map<String, Object> item = getItemData.get(0); // Get the first map in the list
+        Map<String, Object> item = getItemData.get(FIRST_ITEM);
 
         return new Object[][]{
                 {
@@ -52,10 +51,9 @@ public class WireMockTestDataProvider {
 
     @DataProvider(name = "updateItemTestData")
     public static Object[][] provideUpdateItemTestData() {
-        // Assuming updateItemData is a list of maps
         ArrayList<Map<String, Object>> updateItemData = (ArrayList<Map<String, Object>>) testData.get(UPDATE_ITEM);
 
-        Map<String, Object> item = updateItemData.get(0); // Get the first map in the list
+        Map<String, Object> item = updateItemData.get(FIRST_ITEM);
 
         UpdateItemRequest requestBody = new UpdateItemRequest();
         requestBody.setName(item.get("requestBodyName").toString());
@@ -72,10 +70,9 @@ public class WireMockTestDataProvider {
 
     @DataProvider(name = "deleteItemTestData")
     public static Object[][] provideDeleteItemTestData() {
-        // Assuming deleteItemData is a list of maps
         ArrayList<Map<String, Object>> deleteItemData = (ArrayList<Map<String, Object>>) testData.get(DELETE_ITEM);
 
-        Map<String, Object> item = deleteItemData.get(0); // Get the first map in the list
+        Map<String, Object> item = deleteItemData.get(FIRST_ITEM);
 
         return new Object[][]{
                 {
