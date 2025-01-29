@@ -1,0 +1,29 @@
+{
+  "createItemData": [
+    {
+      "requestBodyName":"New Item",
+      "expectedStatusCode": 201,
+      "expectedName": "New Item"
+    }
+  ],
+  "getItemData": [
+    {
+      "itemId": 1,
+      "expectedStatusCode": 200
+    }
+  ],
+  "updateItemData": [
+    {
+      "itemId": 2,
+      "requestBodyName": "Updated Item",
+      "expectedStatusCode": 200,
+      "expectedName": "Updated Item"
+    }
+  ],
+  "deleteItemData": [
+    {
+      "itemId": 2,
+      "expectedStatusCode": 204
+    }
+  ]
+}
