@@ -8,6 +8,7 @@ public class DeleteItemApiClient {
 
     public Response deleteItem(int id) {
         return RestAssured.given()
-                .delete(DELETE_ITEM_ENDPOINT.replace("{id}", String.valueOf(id)));
+                .pathParam("id", id)
+                .delete(DELETE_ITEM_ENDPOINT);
     }
 }
