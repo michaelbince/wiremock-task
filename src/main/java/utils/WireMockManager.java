@@ -11,6 +11,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 public class WireMockManager {
+    private static final String STUBS_PATH = "src/main/resources/stubs/";
     private static WireMockServer wireMockServer;
 
     public static void startWireMock() {
@@ -32,52 +33,63 @@ public class WireMockManager {
     }
 
     private static void registerStubs() {
-        registerStub("/api/items/1", "get_item.json", "GET", 200);
-        registerStub("/api/items", "create_item.json", "POST", 201);
-        registerStub("/api/items/2", "update_item.json", "PUT", 200);
-        registerStub("/api/items/2", "delete_item.json", "DELETE", 204);
+        registerGetStub();
+        registerPostStub();
+        registerPutStub();
+        registerDeleteStub();
     }
 
-    private static void registerStub(String url, String jsonFile, String method, int statusCode) {
-        try {
-            String responseBody = new String(Files.readAllBytes(Paths.get("src/main/resources/stubs/" + jsonFile)));
+    private static void registerGetStub() {
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/items/1"))
+                .withQueryParam("type", equalTo("electronics"))
+                .withHeader("Authorization", equalTo("Bearer token123"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Cache-Control", "no-cache")
+                        .withBody(loadResponseBody("get_item.json"))));
+    }
 
-            switch (method.toUpperCase()) {
-                case "GET":
-                    wireMockServer.stubFor(get(urlEqualTo(url))
-                            .willReturn(aResponse()
-                                    .withStatus(statusCode)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody(responseBody)));
-                    break;
-                case "POST":
-                    wireMockServer.stubFor(post(urlEqualTo(url))
-                            .withHeader("Content-Type", containing("application/json"))
-                            .withRequestBody(containing("\"name\":"))
-                            .willReturn(aResponse()
-                                    .withStatus(statusCode)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody(responseBody)));
-                    break;
-                case "PUT":
-                    wireMockServer.stubFor(put(urlEqualTo(url))
-                            .withHeader("Content-Type", containing("application/json"))
-                            .withRequestBody(containing("\"name\":"))
-                            .willReturn(aResponse()
-                                    .withStatus(statusCode)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody(responseBody)));
-                    break;
-                case "DELETE":
-                    wireMockServer.stubFor(delete(urlEqualTo(url))
-                            .willReturn(aResponse().withStatus(statusCode)));
-                    break;
-                default:
-                    System.err.println("Invalid HTTP method: " + method);
-            }
+    private static void registerPostStub() {
+        wireMockServer.stubFor(post(urlEqualTo("/api/items"))
+                .withHeader("Content-Type", containing("application/json"))
+                .withRequestBody(containing("\"name\":"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(loadResponseBody("create_item.json"))));
+    }
+
+    private static void registerPutStub() {
+        wireMockServer.stubFor(put(urlPathMatching("/api/items/\\d+"))
+                .withHeader("Authorization", equalTo("Bearer token123"))
+                .withHeader("Content-Type", containing("application/json"))
+                .withHeader("Accept", containing("application/json"))
+                .withRequestBody(matchingJsonPath("$.name", equalTo("Updated Item")))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withHeader("Cache-Control", "no-cache")
+                        .withBody(loadResponseBody("update_item.json"))));
+    }
+
+
+
+    private static void registerDeleteStub() {
+        wireMockServer.stubFor(delete(urlEqualTo("/api/items/2"))
+                .willReturn(aResponse()
+                        .withStatus(204)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(loadResponseBody("delete_item.json"))));
+    }
+
+    private static String loadResponseBody(String fileName) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(STUBS_PATH + fileName)));
         } catch (IOException e) {
-            System.err.println("Error reading stub file: " + jsonFile);
+            System.err.println("Error reading stub response file: " + fileName);
             e.printStackTrace();
+            return "{}";
         }
     }
 }

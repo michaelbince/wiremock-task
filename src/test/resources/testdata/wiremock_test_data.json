@@ -9,7 +9,9 @@
   "getItemData": [
     {
       "itemId": 1,
-      "expectedStatusCode": 200
+      "expectedStatusCode": 200,
+      "expectedName": "New Item",
+      "queryParam": "electronics"
     }
   ],
   "updateItemData": [

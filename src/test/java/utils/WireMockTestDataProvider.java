@@ -44,7 +44,9 @@ public class WireMockTestDataProvider {
         return new Object[][]{
                 {
                         Integer.parseInt(item.get("itemId").toString()),
-                        Integer.parseInt(item.get("expectedStatusCode").toString())
+                        Integer.parseInt(item.get("expectedStatusCode").toString()),
+                        item.get("expectedName").toString(),
+                        item.get("queryParam").toString()
                 }
         };
     }
